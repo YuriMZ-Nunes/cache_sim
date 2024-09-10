@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug cache_simulator",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/cache_simulator",
+            "args": ["1", "2", "3", "F", "5", "A"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Ativa o modo avançado do pretty-printing para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compilar Projeto",  // Executa a tarefa de compilação antes de rodar
+            "miDebuggerPath": "/usr/bin/gdb",    // Caminho do GDB (ajuste se necessário)
+            "logging": {
+                "trace": true, "traceResponse": true, "engineLogging": true
+            },
+            "targetArchitecture": "x86_64",      // Ajuste se necessário
+            "visualizerFile": "${workspaceFolder}/.vscode/gdb_visualizers/gdb_visualizer_c.json" // Ajuste se necessário
+        }
+    ]
+}
