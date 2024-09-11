@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 #include "config/data.h"
-
-extern void processar_dados(struct Data *config);
+#include "config/binary.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,9 +10,10 @@ int main(int argc, char *argv[])
 
 	fillData(&config, argc, argv);
 
-	process(&config);
-
-	
+	if(readBinary(&config))
+		printf("Arquivo lido com sucesso, possui %d enderecos\n", config.qtdEnderecos);
+	else
+		perror("Problema ao ler arquivo");
 
     return 0;
 }

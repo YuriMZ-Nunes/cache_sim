@@ -8,8 +8,14 @@ struct Data {
 	char *subst;
 	int flagOut;
 	char *arquivoEntrada;
+	int* enderecos;
+	int qtdEnderecos;
 };
 
+
+
 void fillData(struct Data *config, int argc, char *argv[]);
+
+void addAddress(struct Data *config, int value);
 
 #endif
