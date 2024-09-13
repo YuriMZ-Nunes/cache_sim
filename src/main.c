@@ -1,14 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "config/data.h"
 #include "config/binary.h"
-#include "process.h"
+#include "calc.h"
 
 int main(int argc, char *argv[])
 {
 	struct Data config;
 	fillData(&config, argc, argv);
+
+	struct Cache cache;
+    for(int i=0; i < config.assoc; i++)
+        initCache(&cache, config.nsets); 
+
+    cache.offset = (int)log2(config.bsize);
+    cache.index = (int)log2(config.nsets);
+    cache.tag = 32 - cache.offset - cache.index;
 
 	struct Out result;
 	initOut(&result);
@@ -18,7 +27,7 @@ int main(int argc, char *argv[])
 	else
 		perror("Problema ao ler arquivo");
 
-	initCalc(&config);
+	calcCache(&config, &cache, &result);
 
     return 0;
 }

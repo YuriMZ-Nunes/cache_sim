@@ -24,19 +24,3 @@ void calcCache(struct Data *config, struct Cache *cache, struct Out *out) {
         }
     }
 }
-
-void initCalc(struct Data *config) {
-    struct Out out;
-    initOut(&out);
-
-    struct Cache cache;
-    for(int i=0; i < config->assoc; i++)
-        initCache(&cache, config->nsets);
-
-    cache.offset = (int)log2(config->bsize);
-    cache.index = (int)log2(config->nsets);
-    cache.tag = 32 - cache.offset - cache.index;
-
-    calcCache(config, &cache, &out);
-    return;
-}
