@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "data.h"
+
+void initOut(struct Out *results) {
+    results->totalAccess = 0;
+    results->hitRatio = 0.0;
+    results->totalMissRatio = 0.0;
+    results->compulsoryMissRate = 0.0;
+    results->capacityMissRate = 0.0;
+    results->conflictMissRate = 0.0;
+}
 
 void fillData(struct Data *config, int argc, char *argv[]) {
 	if (argc != 7) {
@@ -15,31 +25,43 @@ void fillData(struct Data *config, int argc, char *argv[]) {
 	config->assoc = atoi(argv[3]);
 	config->subst = argv[4];
 	config->flagOut = atoi(argv[5]);
-	config->arquivoEntrada = argv[6];
-	config->enderecos = NULL;
-	config->qtdEnderecos = 0;
+	config->fileName = argv[6];
+	config->addresses = NULL;
+	config->addressesCount = 0;
 }
 
-void addAddress(struct Data *config, int value) {
-    if(!config->qtdEnderecos){
-        config->qtdEnderecos++;
-        config->enderecos = (int *)malloc(config->qtdEnderecos * sizeof(int));
+void addAddress(struct Data *config, uint32_t value) {
+    if(!config->addressesCount){
+        config->addressesCount++;
+        config->addresses = (uint32_t *)malloc(config->addressesCount * sizeof(uint32_t));
         
-        if (config->enderecos == NULL){
+        if (config->addresses == NULL){
             perror("Erro ao alocar memoria");
             exit(1);
         }
         
-        config->enderecos[config->qtdEnderecos - 1] = value;
+        config->addresses[config->addressesCount - 1] = value;
     } else {
-        config->qtdEnderecos++;
-        config->enderecos = (int *)realloc(config->enderecos, config->qtdEnderecos * sizeof(int));
+        config->addressesCount++;
+        config->addresses = (uint32_t *)realloc(config->addresses, config->addressesCount * sizeof(uint32_t));
         
-        if (config->enderecos == NULL){
+        if (config->addresses == NULL){
             perror("Erro ao realocar memoria");
             exit(1);
         
         }
-        config->enderecos[config->qtdEnderecos - 1] = value;
+        config->addresses[config->addressesCount - 1] = value;
     }
+}
+
+void initCache(struct Cache *cache, int nsets) {
+    cache->tag = (uint32_t *)malloc(nsets * sizeof(uint32_t));
+    cache->val = (uint32_t *)malloc(nsets * sizeof(uint32_t));
+
+    for(int i=0; i<nsets; i++) {
+        cache->tag[i] = -1;
+        cache->val[i] = 0;
+    }
+
+    return;
 }
