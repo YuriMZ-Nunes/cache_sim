@@ -3,6 +3,6 @@
 
 #include "config/data.h"
 
-void calcCache(struct Data *config);
+void initCalc(struct Data *config);
 
 #endif

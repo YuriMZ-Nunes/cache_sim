@@ -55,12 +55,12 @@ void addAddress(struct Data *config, uint32_t value) {
 }
 
 void initCache(struct Cache *cache, int nsets) {
-    cache->tag = (uint32_t *)malloc(nsets * sizeof(uint32_t));
-    cache->val = (uint32_t *)malloc(nsets * sizeof(uint32_t));
+    cache->tags = (uint32_t *)malloc(nsets * sizeof(uint32_t));
+    cache->vals = (uint32_t *)malloc(nsets * sizeof(uint32_t));
 
     for(int i=0; i<nsets; i++) {
-        cache->tag[i] = -1;
-        cache->val[i] = 0;
+        cache->tags[i] = -1;
+        cache->vals[i] = 0;
     }
 
     return;

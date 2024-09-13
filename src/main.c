@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	else
 		perror("Problema ao ler arquivo");
 
-	calcCache(&config);
+	initCalc(&config);
 
     return 0;
 }

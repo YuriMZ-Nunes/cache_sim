@@ -14,8 +14,11 @@ struct Data {
 };
 
 struct Cache {
-	uint32_t* tag;
-	uint32_t* val;
+	int offset;
+	int index;
+	int tag;
+	uint32_t* tags;
+	uint32_t* vals;
 };
 
 struct Out {

@@ -6,35 +6,37 @@
 
 #include "config/data.h"
 
-void calcCache(struct Data *config) {
-    struct Cache cache[config->assoc];
-
-    for(int i=0; i < config->assoc; i++)
-        initCache(&cache[0], config->nsets);
-
-    int offset = (int)log2(config->bsize);
-    int index = (int)log2(config->nsets);
-    int tag = 32 - offset - index;
-
-    int miss = 0, comp = 0, cap = 0, conf = 0, hit = 0;
-    float fmiss, fcomp, fcap, fconf, fhit;
-
+void calcCache(struct Data *config, struct Cache *cache, struct Out *out) {
     for(int i = 0; i < config->addressesCount; i++) {
-        uint32_t t = config->addresses[i] >> (offset + index);
-        uint32_t id = (config->addresses[i] >> offset) & ((1 << index) - 1);
+        uint32_t t = config->addresses[i] >> (cache->offset + cache->index);
+        uint32_t id = (config->addresses[i] >> cache->offset) & ((1 << cache->index) - 1);
 
-        if (cache->val[id] == 0){
-            miss++;
-            cache->val[id] = 1;
-            cache->tag[id] = t;
-        } else if (cache->tag[id] == t){
-            hit++;
+        if (cache->vals[id] == 0){
+            out->totalMissRatio++;
+            cache->vals[id] = 1;
+            cache->tags[id] = t;
+        } else if (cache->tags[id] == t){
+            out->hitRatio++;
         } else {
-            cache->tag[id] = t;
-            cache->val[id] = 1;
-            miss++;
+            cache->tags[id] = t;
+            cache->vals[id] = 1;
+            out->totalMissRatio++;
         }
     }
+}
 
+void initCalc(struct Data *config) {
+    struct Out out;
+    initOut(&out);
+
+    struct Cache cache;
+    for(int i=0; i < config->assoc; i++)
+        initCache(&cache, config->nsets);
+
+    cache.offset = (int)log2(config->bsize);
+    cache.index = (int)log2(config->nsets);
+    cache.tag = 32 - cache.offset - cache.index;
+
+    calcCache(config, &cache, &out);
     return;
 }
