@@ -11,14 +11,15 @@ int main(int argc, char *argv[])
 	struct Data config;
 	fillData(&config, argc, argv);
 
-	struct Cache cache;
-    for(int i=0; i < config.assoc; i++)
-        initCache(&cache, config.nsets); 
+	struct Cache *cache = (struct Cache *)malloc(config.assoc * sizeof(struct Cache));
 
-    cache.offset = (int)log2(config.bsize);
-    cache.index = (int)log2(config.nsets);
-    cache.tag = 32 - cache.offset - cache.index;
-
+    for(int i=0; i < config.assoc; i++) {
+		initCache(&cache[i], config.nsets);
+		cache[i].offset = (int)log2(config.bsize);
+		cache[i].index = (int)log2(config.nsets);
+		cache[i].tag = 32 - cache[i].offset - cache[i].index;
+	}
+        
 	struct Out result;
 	initOut(&result);
 
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
 	else
 		perror("Problema ao ler arquivo");
 
-	calcCache(&config, &cache, &result);
+	calcCache(&config, cache, &result);
 
     return 0;
 }
