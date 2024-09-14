@@ -4,15 +4,25 @@
 
 #include "data.h"
 
-void initOut(struct Out *results) {
-    results->totalAccess = 0;
-    results->hitRatio = 0.0;
-    results->totalMissRatio = 0.0;
-    results->compulsoryMissRate = 0.0;
-    results->capacityMissRate = 0.0;
-    results->conflictMissRate = 0.0;
+/**
+ * Inicializa a struct de resultados com 0
+ * @param result Ponteiro dos resultados da cache (struct Out)
+ */
+void initOut(struct Out *result) {
+    result->totalAccess = 0;
+    result->hitRatio = 0.0;
+    result->totalMissRatio = 0.0;
+    result->compulsoryMissRate = 0.0;
+    result->capacityMissRate = 0.0;
+    result->conflictMissRate = 0.0;
 }
 
+/**
+ * Insere os argumentos passados via linha de comando na struct de configuração da cache
+ * @param config Ponteiro das configurações da cache (struct Data)
+ * @param argc Quantidade de argumentos passados
+ * @param argv Vetor de strings (char* []) com os argumentos
+ */
 void fillData(struct Data *config, int argc, char *argv[]) {
 	if (argc != 7) {
 		printf("Numero de argumentos incorreto. Utilize:\n");
@@ -30,6 +40,11 @@ void fillData(struct Data *config, int argc, char *argv[]) {
 	config->addressesCount = 0;
 }
 
+/**
+ * Aloca espaço na memória para o endereço e insere nas configurações da cache
+ * @param config Ponteiro das configurações da cache (struct Data)
+ * @param value Endereço de memória
+ */
 void addAddress(struct Data *config, uint32_t value) {
     if(!config->addressesCount){
         config->addressesCount++;
@@ -39,7 +54,6 @@ void addAddress(struct Data *config, uint32_t value) {
             perror("Erro ao alocar memoria");
             exit(1);
         }
-        
         config->addresses[config->addressesCount - 1] = value;
     } else {
         config->addressesCount++;
@@ -48,14 +62,19 @@ void addAddress(struct Data *config, uint32_t value) {
         if (config->addresses == NULL){
             perror("Erro ao realocar memoria");
             exit(1);
-        
         }
         config->addresses[config->addressesCount - 1] = value;
     }
 }
 
+/**
+ * Inicializa os cache alocando espaço para as tags e bits de validade, 
+ * preenchendo as tags com o valor maximo do tipo uint32_t (4294967295) e
+ * preenchendo os bits de validade com 0
+ * @param cache Ponteiro da cache (struct Cache)
+ * @param nsets Numeros de sets da cache
+ */
 void initCache(struct Cache *cache, int nsets) {
-
     cache->tags = (uint32_t *)malloc(nsets * sizeof(uint32_t)); 
     cache->vals = (uint32_t *)malloc(nsets * sizeof(uint32_t));
 
@@ -63,6 +82,4 @@ void initCache(struct Cache *cache, int nsets) {
         cache->tags[i] = -1; // max
         cache->vals[i] = 0;
     }
-
-    return;
 }
