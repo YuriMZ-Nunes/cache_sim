@@ -4,7 +4,7 @@
 
 #include "config/data.h"
 #include "config/binary.h"
-#include "calc.h"
+#include "controller/calc.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,12 +23,12 @@ int main(int argc, char *argv[])
 	struct Out result;
 	initOut(&result);
 
-	if(readBinary(&config))
-		printf("Arquivo lido com sucesso, possui %d enderecos\n", config.addressesCount);
-	else
-		perror("Problema ao ler arquivo");
+	if(!readBinary(&config)){
+		perror("Problema ao ler arquivo\n");
+		return 1;
+	}
 
-	calcCache(&config, cache, &result);
+	getHitMiss(&config, cache, &result);
 
     return 0;
 }

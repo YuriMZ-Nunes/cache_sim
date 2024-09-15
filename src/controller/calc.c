@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <math.h>
 #include <time.h>
-#include <arpa/inet.h>
 
-#include "config/data.h"
+#include "../config/data.h"
+#include "result.h"
 
 int getEmpty(struct Cache *cache, int assoc, uint32_t index);
 int findValue (struct Cache *cache, int assoc, uint32_t tag, uint32_t index);
@@ -17,7 +17,7 @@ int capacity (struct Cache *cache, int assoc, int nsets);
  * @param cache Ponteiro da cache (struct Cache)
  * @param result Ponteiro dos resultados da cache (struct Out)
  */
-void calcCache(struct Data *config, struct Cache *cache, struct Out *result) {
+void getHitMiss(struct Data *config, struct Cache *cache, struct Out *result) {
     srand(time(NULL));
     for(int i = 0; i < config->addressesCount; i++) {
         uint32_t tag = config->addresses[i] >> (cache->offset + cache->index);
@@ -56,14 +56,15 @@ void calcCache(struct Data *config, struct Cache *cache, struct Out *result) {
             result->totalMissRatio++;
         }
     }
-
-    //TODO: funcao para formatar a saida
+    result->totalAccess = config->addressesCount;
     result->capacityMissRate = result->capacityMissRate / result->totalMissRatio;
     result->compulsoryMissRate = result->compulsoryMissRate / result->totalMissRatio;
     result->conflictMissRate = result->conflictMissRate / result->totalMissRatio;
 
     result->hitRatio = result->hitRatio / config->addressesCount;
     result->totalMissRatio = 1 - result->hitRatio;
+
+    generateResult(result, config->flagOut);
 }
 
 
