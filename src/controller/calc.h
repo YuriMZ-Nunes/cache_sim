@@ -3,6 +3,6 @@
 
 #include "../config/data.h"
 
-void getHitMiss(struct Data *config, struct Cache *cache, struct Out *out);
+void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack, struct Out *out);
 
 #endif

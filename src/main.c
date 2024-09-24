@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
 	fillData(&config, argc, argv);
 
 	struct Cache *cache = (struct Cache *)malloc(config.assoc * sizeof(struct Cache));
+	struct Stack stack;
+	initStack(&stack, config.nsets, config.assoc);
 
     for(int i=0; i < config.assoc; i++) {
 		initCache(&cache[i], config.nsets);
@@ -28,7 +30,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	getHitMiss(&config, cache, &result);
+	getHitMiss(&config, cache, &stack, &result);
 
     return 0;
 }

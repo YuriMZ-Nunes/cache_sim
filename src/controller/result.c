@@ -10,10 +10,10 @@ void generateResult(struct Out *result, int flag) {
 		sprintf(pyComand, "python3 src/scripts/graphic.py %d %.2f %.2f %.2f %.2f %.2f\n",
 				result->totalAccess,
 				result->hitRatio,
-				result->totalMissRatio,
-				result->compulsoryMissRate,
-				result->capacityMissRate,
-				result->conflictMissRate);
+				result->missRatio,
+				result->compulsoryMissRatio,
+				result->capacityMissRatio,
+				result->conflictMissRatio);
 		
 		if(system(pyComand) == -1){
 			printf("Erro ao rodar o script\n");
@@ -22,10 +22,10 @@ void generateResult(struct Out *result, int flag) {
 		printf("%d %.4f %.4f %.4f %.4f %.4f", 
                 result->totalAccess, 
                 result->hitRatio, 
-                result->totalMissRatio, 
-                result->compulsoryMissRate, 
-                result->capacityMissRate, 
-                result->conflictMissRate);
+                result->missRatio, 
+                result->compulsoryMissRatio, 
+                result->capacityMissRatio, 
+                result->conflictMissRatio);
 		fflush(stdout);
 	}
 }

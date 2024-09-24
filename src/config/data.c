@@ -4,25 +4,15 @@
 
 #include "data.h"
 
-/**
- * Inicializa a struct de resultados com 0
- * @param result Ponteiro dos resultados da cache (struct Out)
- */
 void initOut(struct Out *result) {
     result->totalAccess = 0;
     result->hitRatio = 0.0;
-    result->totalMissRatio = 0.0;
-    result->compulsoryMissRate = 0.0;
-    result->capacityMissRate = 0.0;
-    result->conflictMissRate = 0.0;
+    result->missRatio = 0.0;
+    result->compulsoryMissRatio = 0.0;
+    result->capacityMissRatio = 0.0;
+    result->conflictMissRatio = 0.0;
 }
 
-/**
- * Insere os argumentos passados via linha de comando na struct de configuração da cache
- * @param config Ponteiro das configurações da cache (struct Data)
- * @param argc Quantidade de argumentos passados
- * @param argv Vetor de strings (char* []) com os argumentos
- */
 void fillData(struct Data *config, int argc, char *argv[]) {
 	if (argc != 7) {
 		printf("Numero de argumentos incorreto. Utilize:\n");
@@ -40,11 +30,6 @@ void fillData(struct Data *config, int argc, char *argv[]) {
 	config->addressesCount = 0;
 }
 
-/**
- * Aloca espaço na memória para o endereço e insere nas configurações da cache
- * @param config Ponteiro das configurações da cache (struct Data)
- * @param value Endereço de memória
- */
 void addAddress(struct Data *config, uint32_t value) {
     if(!config->addressesCount){
         config->addressesCount++;
@@ -67,19 +52,59 @@ void addAddress(struct Data *config, uint32_t value) {
     }
 }
 
-/**
- * Inicializa os cache alocando espaço para as tags e bits de validade, 
- * preenchendo as tags com o valor maximo do tipo uint32_t (4294967295) e
- * preenchendo os bits de validade com 0
- * @param cache Ponteiro da cache (struct Cache)
- * @param nsets Numeros de sets da cache
- */
 void initCache(struct Cache *cache, int nsets) {
     cache->tags = (uint32_t *)malloc(nsets * sizeof(uint32_t)); 
     cache->vals = (uint32_t *)malloc(nsets * sizeof(uint32_t));
 
     for(int i=0; i<nsets; i++) {
-        cache->tags[i] = -1; // max
+        cache->tags[i] = -1;
         cache->vals[i] = 0;
     }
+}
+
+void initStack(struct Stack *stack, int nsets, int assoc) {
+    stack->fifo = (uint32_t **)malloc(nsets * sizeof(uint32_t *));
+    stack->lru = (uint32_t **)malloc(nsets * sizeof(uint32_t *));
+
+    for (int i=0; i<nsets; i++){
+        stack->fifo[i] = (uint32_t *)malloc(assoc * sizeof(uint32_t));
+        stack->lru[i] = (uint32_t *)malloc(assoc * sizeof(uint32_t));
+    }
+
+    for (int i=0; i<nsets; i++) {
+        for (int j=0; j<assoc; j++) {
+            stack->fifo[i][j] = -1;
+            stack->lru[i][j] = -1;
+        }
+    }
+}
+
+void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int assoc) {
+    int i = 0;
+    int j = 0;
+
+    for (i; i < assoc; i++){
+        if(stack->fifo[index][i] == -1)
+            break;
+    }
+
+    for (j; j < assoc; j++){
+        if(stack->fifo[index][j] == -1)
+            break;
+    }
+
+    stack->fifo[index][i] = cacheIndex; 
+    stack->lru[index][j] = cacheIndex; 
+}
+
+uint32_t getStack(struct Stack *stack, uint32_t index, int assoc) {
+    uint32_t cacheIndex = stack->fifo[index][0];
+
+    int i = 0;
+    for (i; i < assoc - 1; i++) {
+        stack->fifo[index][i] = stack->fifo[index][i + 1];
+    }
+
+    stack->fifo[index][i] = cacheIndex;
+    return cacheIndex;
 }

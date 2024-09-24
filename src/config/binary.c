@@ -5,11 +5,6 @@
 
 #include "data.h"
 
-/**
- * Acessa o arquivo binario e armazena os endereços nas configurações da cache
- * @param config Ponteiro das configurações da cache (struct Data)
- * @return Retorna 1 caso não aconteça erros na leitura e armazenamento dos dados do arquivo binario, retorna 0 caso ocorra algum erro
- */
 int readBinary(struct Data *config) {
     char* path = "assets/";
     char* file = config->fileName;
