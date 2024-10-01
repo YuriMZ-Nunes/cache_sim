@@ -4,13 +4,33 @@
 
 #include "data.h"
 
-void initOut(struct Out *result) {
+void initOut(struct Result *result) {
     result->totalAccess = 0;
     result->hitRatio = 0.0;
     result->missRatio = 0.0;
     result->compulsoryMissRatio = 0.0;
     result->capacityMissRatio = 0.0;
     result->conflictMissRatio = 0.0;
+}
+
+void restartStack(struct Stack *stack, int nsets, int assoc) {
+    for (int i=0; i<nsets; i++) {
+        for (int j=0; j<assoc; j++) {
+            stack->fifo[i][j] = -1;
+            stack->lru[i][j] = -1;
+        }
+    }
+}
+
+void restartCache(struct Cache *cache, int nsets) {
+    for(int j=0; j<nsets; j++) {
+        cache->tags[j] = -1;
+        cache->vals[j] = 0;
+    }
+
+    cache->index = 0;
+    cache->offset = 0;
+    cache->index = 0;
 }
 
 void fillData(struct Data *config, int argc, char *argv[]) {
@@ -89,7 +109,7 @@ void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int as
     }
 
     for (j; j < assoc; j++){
-        if(stack->fifo[index][j] == -1)
+        if(stack->lru[index][j] == -1)
             break;
     }
 
@@ -97,7 +117,27 @@ void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int as
     stack->lru[index][j] = cacheIndex; 
 }
 
-uint32_t getStack(struct Stack *stack, uint32_t index, int assoc) {
+void updateLRUpriority(struct Stack *stack, int hitCache, uint32_t index, int assoc) {
+    uint32_t cacheIndex = stack->lru[index][hitCache];
+    int endIndex = 0;
+    int findIndex;
+
+    for (endIndex; endIndex < assoc; endIndex++){
+        if (stack->lru[index][endIndex] == cacheIndex)
+            findIndex = endIndex;
+        if (stack->lru[index][endIndex] == -1)
+            break;
+    }
+
+
+    for (int i = findIndex; i < endIndex - 1; i++) {
+        stack->lru[index][i] = stack->lru[index][i + 1];
+    }
+
+    stack->lru[index][endIndex - 1] = cacheIndex;
+}
+
+uint32_t getStackFIFO(struct Stack *stack, uint32_t index, int assoc) {
     uint32_t cacheIndex = stack->fifo[index][0];
 
     int i = 0;
@@ -106,5 +146,17 @@ uint32_t getStack(struct Stack *stack, uint32_t index, int assoc) {
     }
 
     stack->fifo[index][i] = cacheIndex;
+    return cacheIndex;
+}
+
+uint32_t getStackLRU(struct Stack *stack, uint32_t index, int assoc) {
+    uint32_t cacheIndex = stack->lru[index][0];
+
+    int i = 0;
+    for (i; i < assoc - 1; i++) {
+        stack->lru[index][i] = stack->lru[index][i + 1];
+    }
+
+    stack->lru[index][i] = cacheIndex;
     return cacheIndex;
 }

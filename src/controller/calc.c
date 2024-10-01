@@ -6,19 +6,16 @@
 #include <time.h>
 
 #include "../config/data.h"
-#include "result.h"
 
 int getEmpty(struct Cache *cache, int assoc, uint32_t index);
 int findValue (struct Cache *cache, int assoc, uint32_t tag, uint32_t index);
 int capacity (struct Cache *cache, int assoc, int nsets);
 
-void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,struct Out *result) {
+void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,struct Result *result) {
     srand(time(NULL));
     for(int i = 0; i < config->addressesCount; i++) {
         uint32_t tag = config->addresses[i] >> (cache->offset + cache->index);
         uint32_t index = (config->addresses[i] >> cache->offset) & ((1 << cache->index) - 1);
-
-        // addToStack(cache, index);
 
         int changeIndex;
         int find = findValue(cache, config->assoc, tag, index);
@@ -26,7 +23,7 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
 
         if (find >= 0) {
             result->hitRatio++;
-
+            updateLRUpriority(stack, find, index, config->assoc);
         } else if (config->assoc == 1) {
             if (cache[0].vals[index] == 0)
                 result->compulsoryMissRatio++;
@@ -41,7 +38,9 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
             if (strcmp(config->subst, "R") == 0)
                 changeIndex = rand() % config->assoc;
             else if (strcmp(config->subst, "F") == 0)
-                changeIndex = getStack(stack, index, config->assoc);
+                changeIndex = getStackFIFO(stack, index, config->assoc);
+            else if (strcmp(config->subst, "L") == 0)
+                changeIndex = getStackLRU(stack, index, config->assoc);
 
             if (capacity(cache, config->assoc, config->nsets))
                 result->conflictMissRatio++;
@@ -69,8 +68,6 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
 
     result->hitRatio = result->hitRatio / config->addressesCount;
     result->missRatio = 1 - result->hitRatio;
-
-    generateResult(result, config->flagOut);
 }
 
 int getEmpty(struct Cache *cache, int assoc, uint32_t index) {

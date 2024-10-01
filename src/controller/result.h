@@ -2,6 +2,10 @@
 #define RESULT_H
 #include "../config/data.h"
 
-void generateResult(struct Out *result, int flag);
+void callPython(struct Result *result, char* subst);
+
+void onlyPrint(struct Result *result);
+
+void insertCSV(struct Result *result);
 
 #endif
