@@ -4,7 +4,7 @@ Compilção:
 gcc -g -o cache_simulator src/main.c src/controller/calc.c src/controller/result.c src/config/data.c src/config/binary.c -lm
 
 Execução:
-./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada
+./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada.bin
 
 Não é necessário especificar o caminho do arquivo usado, apenas o nome, porem o arquivo deve estar na pasta assets
 
