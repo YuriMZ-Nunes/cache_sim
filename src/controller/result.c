@@ -16,7 +16,7 @@ void callPython(struct Result *result, char* subst) {
 }
 
 void onlyPrint(struct Result *result) {
-	printf("%d %.4f %.4f %.4f %.4f %.4f", 
+	printf("%d %.4f %.4f %.2f %.2f %.2f\n", 
 			result->totalAccess, 
 			result->hitRatio, 
 			result->missRatio, 
@@ -31,7 +31,7 @@ void insertCSV(struct Result *result) {
 
 	file = fopen("src/scripts/results.csv", "a");
 
-	fprintf(file, "%d %.4f %.4f %.4f %.4f %.4f\n",
+	fprintf(file, "%d %.4f %.4f %.2f %.2f %.2f\n",
 				result->totalAccess, 
                 result->hitRatio, 
                 result->missRatio, 

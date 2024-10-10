@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import csv
 import sys
@@ -11,6 +10,52 @@ class Result:
         self.compRatio = compRatio
         self.capRatio = capRatio
         self.confRatio = confRatio
+
+def terminalPrint():
+    results = []
+
+    with open('src/scripts/results.csv', mode='r') as file:
+        result = csv.reader(file,delimiter=' ')
+        for lines in result:
+            results.append(Result(int(lines[0]), float(lines[1]), float(lines[2]), float(lines[3]), float(lines[4]), float(lines[5])))
+
+    if(sys.argv[1] == 'M'):
+        print(f"Numero de acessos: {results[0].access}\n")
+
+        print("\033[92mHit Ratio\033[0m")
+        print(f"Random: {results[0].hitRatio: .2%}")
+        print(f"LRU: {results[1].hitRatio: .2%}")
+        print(f"FIFO: {results[2].hitRatio: .2%}\n")
+
+        print("\033[92mMiss Ratio\033[0m")
+        print(f"Random: {results[0].missRatio: .2%}")
+        print(f"LRU: {results[1].missRatio: .2%}")
+        print(f"FIFO: {results[2].missRatio: .2%}\n")
+
+        print("\033[92mCompusory Miss Ratio\033[0m")
+        print(f"Random: {results[0].compRatio: .2%}")
+        print(f"LRU: {results[1].compRatio: .2%}")
+        print(f"FIFO: {results[2].compRatio: .2%}\n")
+
+        print("\033[92mCapacity Miss Ratio\033[0m")
+        print(f"Random: {results[0].capRatio: .2%}")
+        print(f"LRU: {results[1].capRatio: .2%}")
+        print(f"FIFO: {results[2].capRatio: .2%}\n")
+
+        print("\033[92mConflict Miss Ratio\033[0m")
+        print(f"Random: {results[0].confRatio: .2%}")
+        print(f"LRU: {results[1].confRatio: .2%}")
+        print(f"FIFO: {results[2].confRatio: .2%}\n")
+    else:
+        print(f"\033[92mNumero de acessos:\033[0m {results[0].access}")
+        print(f"\033[92mHit Ratio -\033[0m {results[0].hitRatio: .2%}")
+        print(f"\033[92mMiss Ratio -\033[0m {results[0].missRatio: .2%}")
+        print(f"\033[92mCompusory Miss Ratio -\033[0m {results[0].compRatio: .2%}")
+        print(f"\033[92mCapacity Miss Ratio -\033[0m {results[0].capRatio: .2%}")
+        print(f"\033[92mConflict Miss Ratio -\033[0m {results[0].confRatio: .2%}")
+
+
+
 
 def oneSubGraph():
     with open('src/scripts/results.csv', mode='r') as file:
@@ -43,9 +88,6 @@ def oneSubGraph():
 
     plt.tight_layout()
     plt.show()  
-
-
-    print(result)
     
 def addBarInfos(bars, ax):
     for bar in bars:
@@ -95,10 +137,10 @@ def compairSubsGraph():
 
     plt.show()
 
+
 def main():
     if len(sys.argv) > 1:
         arg = sys.argv[1]
-        print(arg)
         if (arg == 'M'):
             compairSubsGraph()
         else:
@@ -106,7 +148,8 @@ def main():
     else:
         print("Nenhum argumento foi passado.")
 
-
-    
-if __name__ == '__main__':
+try:
+    import matplotlib.pyplot as plt
     main()
+except:
+    terminalPrint()

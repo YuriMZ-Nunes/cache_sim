@@ -1,9 +1,10 @@
 
 # Instruções de Execução do Simulador de Cache
 
-## Execução:
-O executável se encontra na pasta `output`. Para executá-lo, utilize o comando:
+## Compilação
+```gcc -g -o cache_simulator src/main.c src/controller/calc.c src/controller/result.c src/config/data.c src/config/binary.c -lm```
 
+## Execução:
 ```./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada ```
 
 

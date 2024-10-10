@@ -99,7 +99,7 @@ void initStack(struct Stack *stack, int nsets, int assoc) {
     }
 }
 
-void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int assoc) {
+void addToStack(struct Stack *stack, uint32_t tag, uint32_t index, int assoc) {
     int i = 0;
     int j = 0;
 
@@ -113,50 +113,48 @@ void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int as
             break;
     }
 
-    stack->fifo[index][i] = cacheIndex; 
-    stack->lru[index][j] = cacheIndex; 
+    stack->fifo[index][i] = tag; 
+    stack->lru[index][j] = tag; 
 }
 
-void updateLRUpriority(struct Stack *stack, int hitCache, uint32_t index, int assoc) {
-    uint32_t cacheIndex = stack->lru[index][hitCache];
+void updateLRUpriority(struct Stack *stack, uint32_t tag, uint32_t index, int assoc) {
     int endIndex = 0;
-    int findIndex;
-
+    int find = 0;
     for (endIndex; endIndex < assoc; endIndex++){
-        if (stack->lru[index][endIndex] == cacheIndex)
-            findIndex = endIndex;
+        if (stack->lru[index][endIndex] == tag)
+            find = endIndex;
         if (stack->lru[index][endIndex] == -1)
             break;
     }
 
-
-    for (int i = findIndex; i < endIndex - 1; i++) {
+    for (int i = find; i < endIndex - 1; i++) {
         stack->lru[index][i] = stack->lru[index][i + 1];
     }
 
-    stack->lru[index][endIndex - 1] = cacheIndex;
+    stack->lru[index][endIndex - 1] = tag;
 }
 
-uint32_t getStackFIFO(struct Stack *stack, uint32_t index, int assoc) {
-    uint32_t cacheIndex = stack->fifo[index][0];
+uint32_t getStackFIFO(struct Stack *stack, uint32_t tag, uint32_t index, int assoc) {
+    uint32_t outTag = stack->fifo[index][0];
 
     int i = 0;
     for (i; i < assoc - 1; i++) {
         stack->fifo[index][i] = stack->fifo[index][i + 1];
     }
 
-    stack->fifo[index][i] = cacheIndex;
-    return cacheIndex;
+    stack->fifo[index][i] = tag;
+    return outTag;
 }
 
-uint32_t getStackLRU(struct Stack *stack, uint32_t index, int assoc) {
-    uint32_t cacheIndex = stack->lru[index][0];
+uint32_t getStackLRU(struct Stack *stack, uint32_t tag, uint32_t index, int assoc) {
+    uint32_t outTag = stack->lru[index][0];
 
     int i = 0;
+
     for (i; i < assoc - 1; i++) {
         stack->lru[index][i] = stack->lru[index][i + 1];
     }
 
-    stack->lru[index][i] = cacheIndex;
-    return cacheIndex;
+    stack->lru[index][assoc - 1] = tag;
+    return outTag;
 }

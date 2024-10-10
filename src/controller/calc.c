@@ -17,13 +17,14 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
         uint32_t tag = config->addresses[i] >> (cache->offset + cache->index);
         uint32_t index = (config->addresses[i] >> cache->offset) & ((1 << cache->index) - 1);
 
-        int changeIndex;
+        uint32_t outTag;
+        int changeIndex;                                                           
         int find = findValue(cache, config->assoc, tag, index);
         int empty = getEmpty(cache, config->assoc, index);
-
+                    
         if (find >= 0) {
             result->hitRatio++;
-            updateLRUpriority(stack, find, index, config->assoc);
+            updateLRUpriority(stack, tag, index, config->assoc);
         } else if (config->assoc == 1) {
             if (cache[0].vals[index] == 0)
                 result->compulsoryMissRatio++;
@@ -34,13 +35,16 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
             cache[0].tags[index] = tag;
             result->missRatio++;
         } else if (empty < 0){
-            
             if (strcmp(config->subst, "R") == 0)
                 changeIndex = rand() % config->assoc;
-            else if (strcmp(config->subst, "F") == 0)
-                changeIndex = getStackFIFO(stack, index, config->assoc);
-            else if (strcmp(config->subst, "L") == 0)
-                changeIndex = getStackLRU(stack, index, config->assoc);
+            else if (strcmp(config->subst, "F") == 0){
+                outTag = getStackFIFO(stack, tag, index, config->assoc);
+                changeIndex = findValue(cache, config->assoc, outTag, index);
+            }
+            else if (strcmp(config->subst, "L") == 0){
+                outTag = getStackLRU(stack, tag, index, config->assoc);
+                changeIndex = findValue(cache, config->assoc, outTag, index);
+            }
 
             if (capacity(cache, config->assoc, config->nsets))
                 result->conflictMissRatio++;
@@ -52,7 +56,7 @@ void getHitMiss(struct Data *config, struct Cache *cache, struct Stack *stack,st
             result->missRatio++;
         } else {
 
-            addToStack(stack, empty, index, config->assoc);
+            addToStack(stack, tag, index, config->assoc);
 
             cache[empty].tags[index] = tag;
             cache[empty].vals[index] = 1;

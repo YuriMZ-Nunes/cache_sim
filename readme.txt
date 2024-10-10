@@ -1,15 +1,17 @@
 Instruções de Execução do Simulador de Cache
 
+Compilção:
+gcc -g -o cache_simulator src/main.c src/controller/calc.c src/controller/result.c src/config/data.c src/config/binary.c -lm
+
 Execução:
-O executavel se encontra na pasta output e execute
 ./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada
 
-Não é necessário especificar o caminho do arquivo usado, apenas o nome
+Não é necessário especificar o caminho do arquivo usado, apenas o nome, porem o arquivo deve estar na pasta assets
 
 Requisitos minimos
-A única biblioteca externa utilizada é a matplotlib, que é necessária apenas para a geração de gráficos.
+A única biblioteca externa utilizada é a matplotlib, que é usada apenas para a geração de gráficos.
 Se a biblioteca matplotlib não estiver instalada, a execução ainda funcionará, mas os resultados serão exibidos apenas no terminal.
-Para instalar a matplotlib (opcional), execute o seguinte comando na pasta src/scripts
+Para instalar a matplotlib, execute o seguinte comando na pasta src/scripts
 
 pip install -r requirements.txt
 

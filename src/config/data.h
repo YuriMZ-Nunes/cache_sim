@@ -47,14 +47,14 @@ void initCache(struct Cache *cache, int nsets);
 
 void initOut(struct Result *results);
 
-void addToStack(struct Stack *stack, uint32_t cacheIndex, uint32_t index, int assoc);
+void addToStack(struct Stack *stack, uint32_t tag, uint32_t index, int assoc);
 
 void initStack(struct Stack *stack, int nsets, int assoc);
 
-uint32_t getStackFIFO(struct Stack *stack, uint32_t index, int assoc);
+uint32_t getStackFIFO(struct Stack *stack, uint32_t tag, uint32_t index, int assoc);
 
-uint32_t getStackLRU(struct Stack *stack, uint32_t index, int assoc);
+uint32_t getStackLRU(struct Stack *stack, uint32_t tag, uint32_t index, int assoc);
 
-void updateLRUpriority(struct Stack *stack, int hitCache, uint32_t index, int assoc);
+void updateLRUpriority(struct Stack *stack, uint32_t tag, uint32_t index, int assoc);
 
 #endif
